@@ -1,5 +1,6 @@
 package calculator;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -37,14 +38,25 @@ class StringCalculatorTest {
         assertThrows(IllegalArgumentException.class, () -> stringCalculator.calc(input));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"//;\n1;2:3", "//?\n1?2:3"})
+    @Test
     void 올바른_커스텀구분자_형식이면_커스텀구분자를_추가하여_반환한다() {
 
         String input = "//;\n1;2:3";
 
-        int result = stringCalculator.calc(input);
+        String delimiter = stringCalculator.addCustomDelimiter(input);
 
-        assertEquals(1, result);
+        assertEquals("\\Q;\\E|,|:", delimiter);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"//;\n1;2:3", "//?\n1?2?3"})
+    void 커스텀구분자_선언부를_제거한다(String input) {
+
+        String delimiter = stringCalculator.addCustomDelimiter(input);
+        String numbers = stringCalculator.extractNumbers(input);
+
+        String[] tokens = numbers.split(delimiter);
+
+        assertArrayEquals(new String[]{"1", "2", "3"}, tokens);
     }
 }
