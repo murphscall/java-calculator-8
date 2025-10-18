@@ -14,11 +14,16 @@ class StringCalculatorTest {
 
     @Test
     void 입력값이_null이면_예외를_반환한다() {
-
         String input = null;
 
-        assertThrows(IllegalArgumentException.class, () -> stringCalculator.calc(input),
-                "null 입력 시 IllegalArgumentException 이 발생해야 한다.");
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> stringCalculator.calc(input),
+                "null 입력 시 IllegalArgumentException 이 발생해야 한다."
+        );
+
+        // 예외 메시지 검증
+        assertEquals("입력이 null 일 수 없습니다.", exception.getMessage());
     }
 
     @Test
@@ -59,4 +64,22 @@ class StringCalculatorTest {
 
         assertArrayEquals(new String[]{"1", "2", "3"}, tokens);
     }
+
+    @Test
+    void 잘못된_숫자_형식일때_예외를_반환한다() {
+
+        String input = "1,a:3";
+
+        String delimiter = stringCalculator.addCustomDelimiter(input);
+        String numbers = stringCalculator.extractNumbers(input);
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> stringCalculator.calculateSum(numbers, delimiter)
+        );
+
+        // 예외 메시지 검증
+        assertEquals("잘못된 숫자 형식입니다.", exception.getMessage());
+    }
+
 }
