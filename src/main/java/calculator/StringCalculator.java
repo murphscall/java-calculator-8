@@ -23,7 +23,7 @@ public class StringCalculator {
         String delimiter = addCustomDelimiter(input);
         String numbers = extractNumbers(input);
 
-        return 1;
+        return calculateSum(numbers, delimiter);
     }
 
     private void validateInput(String input) {
@@ -72,6 +72,17 @@ public class StringCalculator {
             throw new IllegalArgumentException("음수는 허용되지 않습니다.");
         }
         return num;
+    }
+
+
+    public int calculateSum(String numbers, String delimiter) {
+        String[] tokens = numbers.split(delimiter);
+
+        int sum = 0;
+        for (String token : tokens) {
+            sum += parseNumber(token);
+        }
+        return sum;
     }
 
 }
