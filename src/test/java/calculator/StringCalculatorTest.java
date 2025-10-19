@@ -1,8 +1,6 @@
 package calculator;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,76 +8,76 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class StringCalculatorTest {
 
-    private final StringCalculator stringCalculator = new StringCalculator();
+	private final StringCalculator stringCalculator = new StringCalculator();
 
-    @Test
-    void 입력값이_null이면_예외를_반환한다() {
-        String input = null;
+	@Test
+	void 입력값이_null이면_예외를_반환한다() {
+		String input = null;
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> stringCalculator.calc(input),
-                "null 입력 시 IllegalArgumentException 이 발생해야 한다."
-        );
+		IllegalArgumentException exception = assertThrows(
+			IllegalArgumentException.class,
+			() -> stringCalculator.calc(input),
+			"null 입력 시 IllegalArgumentException 이 발생해야 한다."
+		);
 
-        // 예외 메시지 검증
-        assertEquals("입력이 null 일 수 없습니다.", exception.getMessage());
-    }
+		// 예외 메시지 검증
+		assertEquals("입력이 null 일 수 없습니다.", exception.getMessage());
+	}
 
-    @Test
-    void 입력값이_빈문자열이면_0을_반환한다() {
+	@Test
+	void 입력값이_빈문자열이면_0을_반환한다() {
 
-        String input = "";
+		String input = "";
 
-        int result = stringCalculator.calc(input);
+		int result = stringCalculator.calc(input);
 
-        assertEquals(0, result);
-    }
+		assertEquals(0, result);
+	}
 
-    @ParameterizedTest
-    @ValueSource(strings = {"//;!n1;2;3", "//?!n1;2?3"})
-    void 올바른_커스텀구분자_형식이아니면_예외를_반환한다(String input) {
-        // calc() 호출 시 잘못된 커스텀 구분자 형식이면 예외 발생
-        assertThrows(IllegalArgumentException.class, () -> stringCalculator.calc(input));
-    }
+	@ParameterizedTest
+	@ValueSource(strings = {"//;!n1;2;3", "//?!n1;2?3"})
+	void 올바른_커스텀구분자_형식이아니면_예외를_반환한다(String input) {
+		// calc() 호출 시 잘못된 커스텀 구분자 형식이면 예외 발생
+		assertThrows(IllegalArgumentException.class, () -> stringCalculator.calc(input));
+	}
 
-    @Test
-    void 올바른_커스텀구분자_형식이면_커스텀구분자를_추가하여_반환한다() {
+	@Test
+	void 올바른_커스텀구분자_형식이면_커스텀구분자를_추가하여_반환한다() {
 
-        String input = "//;\n1;2:3";
+		String input = "//;\n1;2:3";
 
-        String delimiter = stringCalculator.addCustomDelimiter(input);
+		String delimiter = stringCalculator.addCustomDelimiter(input);
 
-        assertEquals("\\Q;\\E|,|:", delimiter);
-    }
+		assertEquals("\\Q;\\E|,|:", delimiter);
+	}
 
-    @ParameterizedTest
-    @ValueSource(strings = {"//;\n1;2:3", "//?\n1?2?3"})
-    void 커스텀구분자_선언부를_제거한다(String input) {
+	@ParameterizedTest
+	@ValueSource(strings = {"//;\n1;2:3", "//?\n1?2?3"})
+	void 커스텀구분자_선언부를_제거한다(String input) {
 
-        String delimiter = stringCalculator.addCustomDelimiter(input);
-        String numbers = stringCalculator.extractNumbers(input);
+		String delimiter = stringCalculator.addCustomDelimiter(input);
+		String numbers = stringCalculator.extractNumbers(input);
 
-        String[] tokens = numbers.split(delimiter);
+		String[] tokens = numbers.split(delimiter);
 
-        assertArrayEquals(new String[]{"1", "2", "3"}, tokens);
-    }
+		assertArrayEquals(new String[] {"1", "2", "3"}, tokens);
+	}
 
-    @Test
-    void 잘못된_숫자_형식일때_예외를_반환한다() {
+	@Test
+	void 잘못된_숫자_형식일때_예외를_반환한다() {
 
-        String input = "1,a:3";
+		String input = "1,a:3";
 
-        String delimiter = stringCalculator.addCustomDelimiter(input);
-        String numbers = stringCalculator.extractNumbers(input);
+		String delimiter = stringCalculator.addCustomDelimiter(input);
+		String numbers = stringCalculator.extractNumbers(input);
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> stringCalculator.calculateSum(numbers, delimiter)
-        );
+		IllegalArgumentException exception = assertThrows(
+			IllegalArgumentException.class,
+			() -> stringCalculator.calculateSum(numbers, delimiter)
+		);
 
-        // 예외 메시지 검증
-        assertEquals("잘못된 숫자 형식입니다.", exception.getMessage());
-    }
+		// 예외 메시지 검증
+		assertEquals("잘못된 숫자 형식입니다.", exception.getMessage());
+	}
 
 }
